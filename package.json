@@ -12,6 +12,7 @@
     "@types/node": "^16.18.105",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
+    "antd": "^5.21.2",
     "date-fns": "^3.6.0",
     "mobx": "^6.13.1",
     "mobx-react": "^9.1.1",
