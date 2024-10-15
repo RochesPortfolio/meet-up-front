@@ -3,7 +3,7 @@ import GoogleLoginButton from '../components/GoogleLoginButton'
 import colors from '../styles/colors'
 import { observer } from 'mobx-react'
 import store from '../store';
-
+import whiteLogo from '../assets/icons/whiteLogo.png'
 const LoginScreen = observer(() => {
 
   const LoginRightCard = (): JSX.Element => {
@@ -12,7 +12,7 @@ const LoginScreen = observer(() => {
         <p>{"Crea o Inicia Sesion con: "}</p>
         <GoogleLoginButton />
         <p>
-        {store.loginStatus ? `Bienvenido ${store.user}` : 'Inicia Sesion'}
+          { }
         </p>
       </div>
     )
@@ -20,6 +20,24 @@ const LoginScreen = observer(() => {
   }
   const LoginLeftCard = (): JSX.Element => {
     return <div style={$loginRightCard}>
+      <div style={{
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        display: 'flex',
+        height: '100%',
+        width: '100%',
+      }}>
+        <div>
+          <img src={whiteLogo} alt="Google Logo" style={{
+            width: '50%',
+            objectFit: 'contain',
+            margin:0,
+            padding:0,
+          }} />
+          <h1 style={{ color: '#ffffff', fontSize: 50, fontWeight:"bold" }} >MeetUp<br/>Prototype</h1>
+        </div>
+      </div>
     </div>
 
   }
