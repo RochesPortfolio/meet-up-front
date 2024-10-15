@@ -10,7 +10,11 @@ class Store {
     loginStatus: boolean = false; 
     user: string = '';
     password: string = '';
+    loading: boolean = false;   
 
+    setloading(status: boolean) {
+        this.loading = status;
+    }
     addTodo() {
         this.todos.push(this.newTodo);
         this.newTodo = '';

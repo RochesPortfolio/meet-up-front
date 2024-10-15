@@ -6,38 +6,38 @@ import store from '../store';
 
 const LoginScreen = observer(() => {
 
-  const LoginRightCard = () : JSX.Element => {
-    return<div style={$loginLeftCard}>
-      <p children="Crea o Inicia Sesion con: "/>
-      <GoogleLoginButton/>
-      <p children={
-        store.loginStatus ? `Bienvenido ${store.user}` : 'Inicia Sesion'
+  const LoginRightCard = (): JSX.Element => {
+    return (
+      <div style={$loginLeftCard}>
+        <p>{"Crea o Inicia Sesion con: "}</p>
+        <GoogleLoginButton />
+        <p>
+        {store.loginStatus ? `Bienvenido ${store.user}` : 'Inicia Sesion'}
+        </p>
+      </div>
+    )
 
-
-      }/>
+  }
+  const LoginLeftCard = (): JSX.Element => {
+    return <div style={$loginRightCard}>
     </div>
 
   }
-  const LoginLeftCard = () : JSX.Element => {
-    return<div style={$loginRightCard}>
-    </div>
-
-  }
 
 
-  const LoginCard = () : JSX.Element => {
+  const LoginCard = (): JSX.Element => {
     return <div style={$loginCard}>
-      <LoginRightCard/>
-      <LoginLeftCard/>
+      <LoginRightCard />
+      <LoginLeftCard />
     </div>
   }
 
 
-    
+
   return (
     <div style={$loginContainer}>
-      
-      <LoginCard/>
+
+      <LoginCard />
     </div>
   )
 }
@@ -45,17 +45,17 @@ const LoginScreen = observer(() => {
 
 export default LoginScreen
 
-const $loginContainer : CSSProperties  = {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    height: '100vh',
-    width: '100vw',
-    backgroundColor: colors.palette.whiteBackground,
-    boxShadow: "0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22)"    
+const $loginContainer: CSSProperties = {
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  height: '100vh',
+  width: '100vw',
+  backgroundColor: colors.palette.whiteBackground,
+  boxShadow: "0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22)"
 }
 
-const $loginCard : CSSProperties = {
+const $loginCard: CSSProperties = {
   backgroundColor: 'white',
   height: '75vh',
   width: '70vw',
@@ -66,7 +66,7 @@ const $loginCard : CSSProperties = {
 
 }
 
-const $loginLeftCard : CSSProperties = {
+const $loginLeftCard: CSSProperties = {
   backgroundColor: colors.palette.white,
   height: '100%',
   width: '50%',
@@ -78,7 +78,7 @@ const $loginLeftCard : CSSProperties = {
   display: 'flex',
 
 }
-const $loginRightCard : CSSProperties = {
+const $loginRightCard: CSSProperties = {
   backgroundColor: colors.palette.primaryYellow,
   height: '100%',
   width: '50%',
