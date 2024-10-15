@@ -4,20 +4,34 @@ import Header from './components/Header';
 import Footer from './components/Footer';
 import SearchPage from './components/SearchPage';
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import LoginScreen from './Screens/Login.screen';
+import { GoogleOAuthProvider } from '@react-oauth/google';
 
 function App() {
   return (
+    <GoogleOAuthProvider clientId= '142594241138-8m6t09o3doa18e5n7tmbk8b2d2kvc7va.apps.googleusercontent.com'>
+
     <div className="App">
       <Router>
-        <Header />
+        {/* <Header /> */}
         <Routes>
-          <Route path="/search" element={<SearchPage />} />
-          <Route path="/" element={<Home />} />
+          {/* <FunctionalApp/> */}
+          <Route path="/" element={<LoginScreen />} />
         </Routes>
-        <Footer />
+        {/* <Footer /> */}
       </Router>
     </div>
+    </GoogleOAuthProvider>
   );
 }
+
+function FunctionalApp() {
+  return (
+    <>
+    <Route path="/search" element={<SearchPage />} />
+    <Route path="/Home" element={<Home />} />
+    </>
+  );
+} 
 
 export default App;
