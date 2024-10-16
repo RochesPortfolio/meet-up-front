@@ -1,0 +1,30 @@
+.title {
+    padding: 0 0 30px;
+}
+.tableContainer {
+    height: 5vh;
+    justify-content: center;
+    display: flex;
+    align-items: center;
+}
+
+.tableContent {
+    width: 70%;
+    padding: 0 70px;
+}
+
+.labelContent {
+    padding: 0 10px 0 0;
+}
+
+.bodyContainer {
+    justify-content: center;
+    display: flex;
+    align-items: center;
+    padding: 0 0 30px;
+}
+
+.rowContent {
+    padding: 0 0 20px;
+    justify-content: center;
+}
