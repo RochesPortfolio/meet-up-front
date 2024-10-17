@@ -131,7 +131,7 @@ const Guest = () => {
     ]
 
 	return (
-        <div>
+        <div className="home__section">
             {loading ? (
                 <div className="spin-container">
                     <Spin size="large" fullscreen/>
@@ -151,7 +151,7 @@ const Guest = () => {
                                             value={eventSelected}
                                             onChange={(value) => setEventSelected(value)}
                                             placeholder="-- Selecciona --"
-                                            style={{width: 180}}
+                                            style={{width: 200}}
                                             >
                                             {events.map((event, index) => (
                                                 <Select.Option key={index} value={event}>{event}</Select.Option>
@@ -170,7 +170,7 @@ const Guest = () => {
                         <h2>Lista de Asistentes</h2>
                         <div className="rowContainer">
                             <Row gutter={16} className="rowContent">
-                                <Col span={3}>
+                                <Col span={3} className="colContent">
                                     <Card bordered={true}>
                                         <Statistic
                                             title="Confirmada"
@@ -183,7 +183,7 @@ const Guest = () => {
                                         />
                                     </Card>
                                 </Col>
-                                <Col span={3}>
+                                <Col span={3} className="colContent">
                                     <Card bordered={true}>
                                         <Statistic
                                             title="Pendientes"
@@ -196,7 +196,7 @@ const Guest = () => {
                                         />
                                     </Card>
                                 </Col>
-                                <Col span={3}>
+                                <Col span={3} className="colContent">
                                     <Card bordered={true}>
                                         <Statistic
                                             title="Rechazados"
