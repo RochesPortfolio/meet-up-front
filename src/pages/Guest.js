@@ -18,6 +18,7 @@ const Guest = () => {
             const data = await res.json();
             console.log(data);
             const eventList = data.map(event => event.nombre_evento);
+            console.log(eventList)
             setEvents(eventList);
         } catch (error) {
             console.error("Error al obtener lista de eventos:", error);
@@ -137,8 +138,8 @@ const Guest = () => {
                     <Spin size="large" fullscreen/>
                 </div>
             ) : (
-                <div>         
-                    <h1>Asistentes por evento</h1>
+                <div className="home_container">         
+                    <h1>Invitados por evento</h1>
                     <div className="tableContainer">
                         <table className="tableContent">
                             <thead>
@@ -190,7 +191,7 @@ const Guest = () => {
                                             value={pending}
                                             precision={0}
                                             valueStyle={{
-                                                color: '#f0e512',
+                                                color: '#FFDF2B',
                                             }}
                                             prefix=""
                                         />

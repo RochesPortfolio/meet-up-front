@@ -1,11 +1,13 @@
 import React from "react";
 import whiteLogo from '../assets/icons/whiteLogo.png'
+import blueLogo from '../assets/icons/blueLogo.png'
 
-const Logo = () => {
+const Logo = ({darkTheme}) => {
     return (
         <div className="logo">
             <div className="logo-icon">
-                <img src={whiteLogo} />
+                {darkTheme ? <img src={whiteLogo} /> :
+                    <img src={blueLogo}/>} 
             </div>
         </div>
     );

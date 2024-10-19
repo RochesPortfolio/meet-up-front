@@ -3,6 +3,7 @@ import Home from './components/Home';
 import Footer from './components/Footer';
 import SearchPage from './components/SearchPage';
 import Guest from '././pages/Guest'
+import Event from '././pages/Events'
 import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 import LoginScreen from './Screens/Login.screen';
 import { GoogleOAuthProvider } from '@react-oauth/google';
@@ -46,7 +47,7 @@ function AppContent() {
       <Layout style={{height: '100vh', overflow: 'hidden'}}>
         {location.pathname !== '/' && 
           <Sider collapsed={collapsed} collapsible trigger={null} className='sidebar' theme={darkTheme ? 'dark' : 'light'}>
-            <Logo />
+            <Logo darkTheme={darkTheme} />
             <ToogleThemeButton darkTheme={darkTheme} toggleTheme={toggleTheme}/>
             <MenuList darkTheme={darkTheme} />
             <Button type='text' className='toggle' onClick={() => setCollapsed(!collapsed)} 
@@ -55,16 +56,19 @@ function AppContent() {
           </Sider>
         }
         <Layout>
-          <Content style={{height: '100vh', width: '100vw', overflowY: 'auto', marginLeft:'-55px', backgroundColor: colorBgContainer}}>
-            <LoadingComponent>
-              <Routes>
-                {/* <FunctionalApp/> */}
-                <Route path="/" element={<LoginScreen />} />
-                <Route path="/home" element={<Home />} />
-                <Route path="/guest" element={<Guest />} />
-              </Routes>
-            </LoadingComponent>
-          </Content>
+          <Header className='header'>
+            <Content style={{height: '100vh', width: '100vw', overflowY: 'auto', marginLeft:'-55px', backgroundColor: colorBgContainer, marginTop: '70px'}}>
+              <LoadingComponent>
+                <Routes>
+                  {/* <FunctionalApp/> */}
+                  <Route path="/" element={<LoginScreen />} />
+                  <Route path="/home" element={<Home />} />
+                  <Route path="/guest" element={<Guest />} />
+                  <Route path="/event" element={<Event />} />
+                </Routes>
+              </LoadingComponent>
+            </Content>
+          </Header>
         </Layout>
       </Layout>
     </div>
