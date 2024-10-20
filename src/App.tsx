@@ -4,17 +4,17 @@ import Footer from './components/Footer';
 import SearchPage from './components/SearchPage';
 import Guest from '././pages/Guest'
 import Event from '././pages/Events'
-import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, useLocation, useNavigate } from "react-router-dom";
 import LoginScreen from './Screens/Login.screen';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import LoadingComponent from './components/Common/LoadingComponent';
-import { Button, Layout, theme } from 'antd';
+import { Avatar, Button, Layout, Menu, Modal, Popover, Spin, theme } from 'antd';
 import Logo from './components/Logo';
 import MenuList from './components/MenuList';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import ToogleThemeButton from './components/ToggleThemeButton';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faAnglesLeft,  faAnglesRight} from '@fortawesome/free-solid-svg-icons';
+import { faAnglesLeft,  faAnglesRight, faArrowRightFromBracket} from '@fortawesome/free-solid-svg-icons';
 import { Content } from 'antd/es/layout/layout';
 
 const {Header, Sider} = Layout;
@@ -33,6 +33,11 @@ function AppContent() {
   const location = useLocation();
   const [darkTheme, setDarkTheme] = useState(true);
   const [collapsed, setCollapsed] = useState(false);
+  const [userPhoto, setUserPhoto] = useState<string | null>(null);
+  const [userName, setUserName] = useState<string | null>(null);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
 
   const toggleTheme = () => {
     setDarkTheme(!darkTheme);
@@ -41,6 +46,45 @@ function AppContent() {
   const {
     token: { colorBgContainer },
   } = theme.useToken();
+
+  useEffect(() => {
+    const savedPhoto = localStorage.getItem('userPhoto');
+    const username = localStorage.getItem('userName');
+    console.log(savedPhoto, 'foto')
+    if(savedPhoto && userName !== '') {
+      setUserPhoto(savedPhoto);
+      setUserName(username);
+    };
+  })
+
+  const showLogoutModal = () => {
+    setIsModalVisible(true);
+  };
+
+  const userMenu = (
+    <Menu>
+      <Menu.Item onClick={showLogoutModal} icon={<FontAwesomeIcon icon={faArrowRightFromBracket} />}>
+        Cerrar sesión
+      </Menu.Item>
+    </Menu>
+  );
+
+  const handleLogoutConfirm = () => {
+    // cerrar sesión de google
+    setIsLoading(true);
+    setIsModalVisible(false);
+
+    setTimeout(() => {
+      localStorage.removeItem('userPhoto'); 
+      localStorage.removeItem('userName'); 
+      setIsLoading(false);
+      navigate('/'); 
+    }, 2000);
+  };
+
+  const handleCancel = () => {
+    setIsModalVisible(false);
+  };
 
   return(
     <div className="App">
@@ -56,8 +100,19 @@ function AppContent() {
           </Sider>
         }
         <Layout>
-          <Header className='header'>
-            <Content style={{height: '100vh', width: '100vw', overflowY: 'auto', marginLeft:'-55px', backgroundColor: colorBgContainer, marginTop: '70px'}}>
+        {location.pathname !== '/' && ( // Condición para mostrar el Header
+            <Header className='header' style={!darkTheme ? { 'background': '#fff' } : { 'background': '#001529' }}>
+              <div style={{float: 'right', paddingRight: '30px'}}>
+                <Popover content={userMenu} trigger="click">
+                  <div style={{display: 'flex', alignItems: 'center', cursor: 'pointer'}}>
+                    <Avatar src={userPhoto} style={{marginRight: '8px'}} />
+                    <span style={{color: '#FFFFFF'}}>{userName}</span>
+                  </div>
+                </Popover>
+              </div>
+            </Header>
+          )}
+            <Content style={{height: '100vh', width: '100vw', overflowY: 'auto', marginLeft:'-55px', overflowX: 'hidden'}}>
               <LoadingComponent>
                 <Routes>
                   {/* <FunctionalApp/> */}
@@ -68,9 +123,20 @@ function AppContent() {
                 </Routes>
               </LoadingComponent>
             </Content>
-          </Header>
+          {/* <Header className='header' style={!darkTheme ? {'background': '#fff'} : {'background': '#001529'}}>
+          </Header> */}
         </Layout>
       </Layout>
+
+      <Modal visible={isModalVisible} onOk={handleLogoutConfirm} onCancel={handleCancel} okText="Aceptar" cancelText="Cancelar" centered>
+        <p>¿Estás seguro que deseas cerrar sesión?</p>
+      </Modal>
+
+      {isLoading && (
+        <div>
+          <Spin size="large" tip="Cerrando Sesión..." fullscreen/>
+        </div>
+      )}
     </div>
   );
   //   {/* <div className="App">
