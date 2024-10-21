@@ -18,10 +18,20 @@
 }
 
 .bodyContainer {
-    justify-content: center;
     display: flex;
+    justify-content: center;
     align-items: center;
     padding: 0 0 30px;
+    flex-direction: column;
+}
+
+.buttonContainer {
+    margin-bottom: 20px;
+    /* align-items: end; */
+    display: flex;
+    justify-content: end;
+    /* float: right; */
+    width: 78%;
 }
 
 .rowContent {

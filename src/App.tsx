@@ -106,13 +106,13 @@ function AppContent() {
                 <Popover content={userMenu} trigger="click">
                   <div style={{display: 'flex', alignItems: 'center', cursor: 'pointer'}}>
                     <Avatar src={userPhoto} style={{marginRight: '8px'}} />
-                    <span style={{color: '#FFFFFF'}}>{userName}</span>
+                    <span style={{color: darkTheme ? '#FFFFFF' : '#001529'}}>{userName}</span>
                   </div>
                 </Popover>
               </div>
             </Header>
           )}
-            <Content style={{height: '100vh', width: '100vw', overflowY: 'auto', marginLeft:'-55px', overflowX: 'hidden'}}>
+            <Content style={{ width: '100vw', overflowY: 'auto', marginLeft:'-55px', overflowX: 'hidden'}}>
               <LoadingComponent>
                 <Routes>
                   {/* <FunctionalApp/> */}

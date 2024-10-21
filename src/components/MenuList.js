@@ -4,11 +4,19 @@ import { HomeOutlined } from "@material-ui/icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCalendarMinus } from '@fortawesome/free-regular-svg-icons';
 import { faHouse, faPeopleGroup, faGaugeHigh } from "@fortawesome/free-solid-svg-icons";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 const MenuList = ({darkTheme}) => {
+    const location = useLocation();
+
+    const optionsMenu = {
+        '/home': 'home',
+        '/guest': 'guests',
+        '/events': 'event'
+    }
+
     return (
-        <Menu theme={darkTheme ? 'dark' : 'light'} mode="inline" className="menu-bar">
+        <Menu theme={darkTheme ? 'dark' : 'light'} mode="inline" className="menu-bar" selectedKeys={[optionsMenu[location.pathname] || 'home']}>
             <Menu.Item key="home" icon={<FontAwesomeIcon icon={faGaugeHigh} />}>
                 Dashboard
                 <Link to="/home"></Link>

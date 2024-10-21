@@ -67,7 +67,7 @@ const $loginContainer: CSSProperties = {
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
-  height: '100vh',
+  height: '110vh',
   width: '100vw',
   backgroundColor: colors.palette.whiteBackground,
   boxShadow: "0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22)"
@@ -81,7 +81,7 @@ const $loginCard: CSSProperties = {
   flexDirection: 'row',
   display: 'flex',
   boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.25)', // Agrega esta línea para la sombra inferior
-
+  marginTop: '50px'
 }
 
 const $loginLeftCard: CSSProperties = {
