@@ -4,6 +4,7 @@ import Footer from './components/Footer';
 import SearchPage from './components/SearchPage';
 import Guest from '././pages/Guest'
 import Event from '././pages/Events'
+import Dashboard from '././pages/Dashboard'
 import { BrowserRouter as Router, Routes, Route, useLocation, useNavigate } from "react-router-dom";
 import LoginScreen from './Screens/Login.screen';
 import { GoogleOAuthProvider } from '@react-oauth/google';
@@ -120,6 +121,7 @@ function AppContent() {
                   <Route path="/home" element={<Home />} />
                   <Route path="/guest" element={<Guest />} />
                   <Route path="/event" element={<Event />} />
+                  <Route path="/dashboard" element={<Dashboard/>}/>
                 </Routes>
               </LoadingComponent>
             </Content>
