@@ -39,7 +39,7 @@ const TableauEmbed = () => {
         if (!response.ok) {
           throw new Error('Error al autenticar con Tableau');
         }
-        // Aquí puedes realizar más acciones si es necesario
+        
       })
       .catch(error => {
         console.error('Error:', error);
