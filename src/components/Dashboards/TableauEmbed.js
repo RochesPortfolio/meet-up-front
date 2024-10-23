@@ -7,11 +7,11 @@ const TableauEmbed = () => {
     const initViz = () => {
       const vizContainer = vizRef.current;
 
-      // URL del dashboard y el token personal de acceso
-      const tableauServerUrl = "https://us-east-1.online.tableau.com"; // Cambia según tu región
-      const personalAccessToken = "s63RrKPnQ8GiRH2peGDNfA==:jiM4nZxYhXbf1Sh63yDaQztYTpkgEZ6r"; // Reemplaza esto con tu PAT
-      const siteName = "elhilario-bc1498df95"; // Nombre del sitio en Tableau
-      const dashboardUrl = "/t/elhilario-bc1498df95/views/MeetUpDashboards/Dashboard2"; // URL del dashboard
+      
+      const tableauServerUrl = "https://us-east-1.online.tableau.com";
+      const personalAccessToken = "s63RrKPnQ8GiRH2peGDNfA==:jiM4nZxYhXbf1Sh63yDaQztYTpkgEZ6r";
+      const siteName = "elhilario-bc1498df95";
+      const dashboardUrl = "/t/elhilario-bc1498df95/views/MeetUpDashboards/Dashboard2";
 
       const fullUrl = `${tableauServerUrl}${dashboardUrl}`;
 
