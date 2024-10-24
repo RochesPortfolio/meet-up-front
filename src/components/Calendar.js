@@ -9,6 +9,9 @@ import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import EventForm from './EventForm';
 import '../components/EventForm.css';
+import EventDetails from './EventDetails';
+import EventSimple from './EventSimple';
+import { Widgets } from '@material-ui/icons';
 
 const localizer = momentLocalizer(moment);
 
@@ -108,7 +111,19 @@ const MyCalendar = () => {
                     endAccessor="end"
                     selectable
                     onSelectSlot={handleSelectSlot}
-                    style={{ height: 500 }}
+                    style={{ height: 600, width: 1200 }}
+                    views={['month', 'week', 'day']}
+                    components={{
+                        month: {
+                            event: EventSimple,
+                        },
+                        week: {
+                            event: EventDetails,
+                        },
+                        day: {
+                            event: EventDetails,
+                        },
+                    }}
                 />
             )}
 
