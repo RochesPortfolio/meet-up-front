@@ -22,7 +22,7 @@ const {Header, Sider} = Layout;
 
 function App() {
   return (
-    <GoogleOAuthProvider clientId= '142594241138-8m6t09o3doa18e5n7tmbk8b2d2kvc7va.apps.googleusercontent.com'>
+    <GoogleOAuthProvider clientId= '187183191936-bsc1pcm8va51dg145ijg7fnup2bm8rgb.apps.googleusercontent.com'>
       <Router>
         <AppContent />
       </Router>
