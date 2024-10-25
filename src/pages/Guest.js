@@ -60,14 +60,18 @@ const Guest = () => {
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [currentStep, setCurrentStep] = useState(0);
     const [form] = Form.useForm();
+    const [formData, setFormData] = useState({});
 
     const fetchEvents = async () => {
         try {
             const res = await fetch(`${ApiPort}/api/events`);
             const {data} = await res.json();
-            const eventList = data.map(event => {
-                return event.nombre_evento;
-            });
+            console.log(data, 'data')
+            const eventList = data.map((event) => ({
+                title: event.nombre_evento,
+                key: event.hash_evento
+            }));
+            console.log(eventList)
             setEvents(eventList);
             setAllEventData(data); 
         } catch (error) {
@@ -118,7 +122,7 @@ const Guest = () => {
                     value: person.correo
                 }))
             }))
-
+            console.log(formattedData)
             setTreeData(formattedData);
         } catch (error) {
             console.error("Error al obtener la lista de Empresas: ", error);
@@ -205,6 +209,7 @@ const Guest = () => {
 
     const handleEventSelect = (value) => {
         setEventInviteSelected(value);
+        console.log(allEventData)
         const selectedEvent = allEventData.find(event => event.nombre_evento === value);
         if(selectedEvent != null) {
             selectedEvent.fecha_inicio = dayjs(selectedEvent.fecha_inicio).format('DD/MM/YYYY');
@@ -219,8 +224,19 @@ const Guest = () => {
         return `${hours}:${minutes}`;
     };
 
-    const handleTreeChange = (newValue) => {
-        setSelectedGuestValues(newValue);
+    const handleTreeChange = async (newValue) => {
+        let newSelectedValues = [...newValue];
+        treeData.forEach((company) => {
+            if(newSelectedValues.includes(company.value)) {
+                const childrenValues = company.children.map((child) => child.value);
+                newSelectedValues = [
+                    ...newSelectedValues.filter(v => v !== company.value),
+                    ...childrenValues
+                ]
+            }
+        })
+        setSelectedGuestValues(newSelectedValues);
+        console.log(selectedGuestValues, 'seleccionados')
     };
 
     const steps = [
@@ -245,8 +261,8 @@ const Guest = () => {
                         value={eventInviteSelected}
                         onChange={handleEventSelect}
                     >
-                        {events.map((event, index) => (
-                            <Select.Option key={index} value={event}>{event}</Select.Option>
+                        {events.map((event) => (
+                            <Select.Option key={event.key} value={event.title}>{event.title}</Select.Option>
                         ))}
                     </Select>
                 </Form.Item>
@@ -309,19 +325,7 @@ const Guest = () => {
                 </Form.Item>
             </>
           ),
-        },
-        // {
-        //   title: 'Paso 3',
-        //   content: (
-        //     <Form.Item
-        //       name="input2"
-        //       label="Input 2"
-        //       rules={[{ required: true, message: 'Por favor ingresa el Input 2' }]}
-        //     >
-        //       <Input />
-        //     </Form.Item>
-        //   ),
-        // },
+        }
       ];
 
     const showModal = () => {
@@ -334,28 +338,58 @@ const Guest = () => {
         setSelectedEventDetails(null);
         setIsModalVisible(false);
         setCurrentStep(0); 
+        setSelectedGuestValues(null);
         form.resetFields();
     };
 
     const prevStep = () => {
         setCurrentStep(currentStep - 1);
+        form.setFieldValue(formData);
     };
 
-    const nextStep = () => {
-        form.validateFields().then(() => {
-          setCurrentStep(currentStep + 1);
-        }).catch(() => {
-          message.error('Por favor completa los campos antes de continuar');
-        });
+    const nextStep = async () => {
+        // form.validateFields().then(() => {
+        //   setCurrentStep(currentStep + 1);
+        // }).catch(() => {
+        //   message.error('Por favor completa los campos antes de continuar');
+        // });
+        try {
+            const values = await form.validateFields();
+            console.log(values, 'valores');
+            setFormData(prevData => ({...prevData, ...values}));
+            setCurrentStep(currentStep +1);
+
+            form.resetFields();
+        } catch (error) {
+            message.error('Por favor completa los campos antes de continuar');
+        }
     };
 
-    const handleCreate = () => {
-        
-        form.validateFields().then((values) => {
-            //enviar datos del formulario
-        }).catch(() => {
+    const handleCreate = async () => {    
+        // form.validateFields().then((values) => {
+        //     console.log(values)
+        // }).catch(() => {
+        //     message.error('Por favor completa los campos');
+        // });
+        try {
+            console.log(selectedGuestValues, 'valores seleccionados')
+            const values = await form.validateFields();
+            console.log(values);
+            const allData = {...formData, ...values, emails: {...selectedGuestValues}};
+            console.log("Datos completos", allData);
+
+            // const bodyData = Object.values(formData.emails).map((email) => ({
+            //     from: "MeetUp Surveys",
+            //     to: email,
+            //     subject: formData.message,
+            //     mailTemplateType: "survey",
+            //     hash_evento: formData.event,
+            // }));
+
+            handleCancel();
+        } catch (error) {
             message.error('Por favor completa los campos');
-        });
+        }
       };
 
 	return (
@@ -381,8 +415,8 @@ const Guest = () => {
                                             placeholder="-- Selecciona --"
                                             style={{width: 200}}
                                             >
-                                            {events.map((event, index) => (
-                                                <Select.Option key={index} value={event}>{event}</Select.Option>
+                                            {events.map((event) => (
+                                                <Select.Option key={event.key} value={event.title}>{event.title}</Select.Option>
                                             ))}
                                             </Select>
                                         </div>
