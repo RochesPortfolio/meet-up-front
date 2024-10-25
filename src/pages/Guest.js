@@ -11,6 +11,7 @@ import { Header } from "antd/es/layout/layout";
 import TextArea from "antd/es/input/TextArea";
 import { faCalendar, faClock } from "@fortawesome/free-regular-svg-icons";
 import dayjs from 'dayjs';
+import { ApiPort } from '../api/ApiPort';
 
 const { Text } = Typography;
 const {Option} = Select;
@@ -62,7 +63,7 @@ const Guest = () => {
 
     const fetchEvents = async () => {
         try {
-            const res = await fetch('http://localhost:3030/api/events');
+            const res = await fetch(`${ApiPort}/api/events`);
             const {data} = await res.json();
             const eventList = data.map(event => {
                 return event.nombre_evento;
@@ -77,7 +78,7 @@ const Guest = () => {
 
     const fetchGuest = async () => {
         try {
-            const res = await fetch('http://localhost:3030/api/invites');
+            const res = await fetch(`${ApiPort}/api/invites`);
             const data = await res.json();
             const mappedData = data.map(guest => {
 

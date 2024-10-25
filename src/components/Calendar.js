@@ -12,6 +12,7 @@ import { Snackbar } from '@material-ui/core';
 import '../components/EventForm.css';
 import EventDetails from './EventDetails';
 import EventSimple from './EventSimple';
+import { ApiPort } from '../api/ApiPort';
 
 const localizer = momentLocalizer(moment);
 
@@ -74,7 +75,7 @@ const MyCalendar = () => {
         e.preventDefault();
         setLoading(true);
         try {
-            const res = await fetch('http://localhost:3030/api/events/create', {
+            const res = await fetch(`${ApiPort}/api/events/create`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -110,8 +111,8 @@ const MyCalendar = () => {
                 nextMonth = 1;
                 nextYear = currentYear + 1;
             }
-            const urlCurrentMonth = `http://localhost:3030/api/events/${currentMonth}/${currentYear}`;
-            const urlNextMonth = `http://localhost:3030/api/events/${nextMonth}/${nextYear}`;
+            const urlCurrentMonth = `${ApiPort}/api/events/${currentMonth}/${currentYear}`;
+            const urlNextMonth = `${ApiPort}/api/events/${nextMonth}/${nextYear}`;
 
             const resCurrentMonth = await fetch(urlCurrentMonth);
             const eventsCurrentMonth = await resCurrentMonth.json();

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import '../components/EventForm.css';
 import  Calendar  from './Calendar.js';
+import { ApiPort } from '../api/ApiPort';
 
 const EventForm = ({ onEventCreated }) => {
   const [formData, setFormData] = useState({
@@ -32,7 +33,7 @@ const EventForm = ({ onEventCreated }) => {
     e.preventDefault();
     setLoading(true);
     try {
-      const res = await fetch('http://localhost:3030/api/events/create', {
+      const res = await fetch(`${ApiPort}/api/events/create`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
