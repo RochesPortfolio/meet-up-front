@@ -80,7 +80,6 @@ const Guest = () => {
             const res = await fetch('http://localhost:3030/api/invites');
             const data = await res.json();
             const mappedData = data.map(guest => {
-                alert(guest.id_persona.nombres)
 
                 return {
                     nombre: guest.id_persona.nombres,
