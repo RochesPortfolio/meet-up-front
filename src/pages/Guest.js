@@ -14,40 +14,40 @@ import dayjs from 'dayjs';
 import { ApiPort } from '../api/ApiPort';
 
 const { Text } = Typography;
-const {Option} = Select;
 const { SHOW_PARENT } = TreeSelect;
 
 const Guest = () => {
-    const treeData = [
-        {
-          title: 'Empresa 1',
-          value: 'empresa1',
-          children: [
-            {
-              title: 'Empleado 1',
-              value: 'empresa1-empleado1',
-            },
-            {
-              title: 'Empleado 2',
-              value: 'empresa1-empleado2',
-            },
-          ],
-        },
-        {
-          title: 'Empresa 2',
-          value: 'empresa2',
-          children: [
-            {
-              title: 'Empleado 3',
-              value: 'empresa2-empleado3',
-            },
-            {
-              title: 'Empleado 4',
-              value: 'empresa2-empleado4',
-            },
-          ],
-        },
-      ];
+    // const treeData = [
+    //     {
+    //       title: 'Empresa 1',
+    //       value: 'empresa1',
+    //       children: [
+    //         {
+    //           title: 'Empleado 1',
+    //           value: 'empresa1-empleado1',
+    //         },
+    //         {
+    //           title: 'Empleado 2',
+    //           value: 'empresa1-empleado2',
+    //         },
+    //       ],
+    //     },
+    //     {
+    //       title: 'Empresa 2',
+    //       value: 'empresa2',
+    //       children: [
+    //         {
+    //           title: 'Empleado 3',
+    //           value: 'empresa2-empleado3',
+    //         },
+    //         {
+    //           title: 'Empleado 4',
+    //           value: 'empresa2-empleado4',
+    //         },
+    //       ],
+    //     },
+    //   ];
+    const [treeData, setTreeData] = useState([]);
     const [selectedGuestValues, setSelectedGuestValues] = useState([]);
     const [events, setEvents] = useState([]);
     const [eventSelected, setEventSelected] = useState(undefined);
@@ -102,6 +102,26 @@ const Guest = () => {
         } catch (error) {
             console.error("Error al obtener lista de asistentes:", error);
             setLoading(false);
+        }
+    }
+
+    const fetchEnterprisesWithPersons = async () => {
+        try {
+            const res = await fetch(`${ApiPort}/api/getEnterprisesWithPersons`);
+            const data = await res.json();
+
+            const formattedData = data.data.map((enterprise) => ({
+                title: enterprise.Empresa.nombre,
+                value: enterprise.Empresa.id_empresa.toString(),
+                children: enterprise.Empresa.Personas.map((person) => ({
+                    title: `${person.nombres} ${person.apellidos}`,
+                    value: person.correo
+                }))
+            }))
+
+            setTreeData(formattedData);
+        } catch (error) {
+            console.error("Error al obtener la lista de Empresas: ", error);
         }
     }
 
@@ -186,13 +206,11 @@ const Guest = () => {
     const handleEventSelect = (value) => {
         setEventInviteSelected(value);
         const selectedEvent = allEventData.find(event => event.nombre_evento === value);
-        console.log(selectedEvent, 'evento seleccionado')
         if(selectedEvent != null) {
             selectedEvent.fecha_inicio = dayjs(selectedEvent.fecha_inicio).format('DD/MM/YYYY');
             selectedEvent.hora_inicio = formatTime(selectedEvent.hora_inicio);
             selectedEvent.hora_culminacion = formatTime(selectedEvent.hora_culminacion);
             setSelectedEventDetails(selectedEvent);
-            console.log(selectedEventDetails, 'detalle')
         }
     }
 
@@ -267,7 +285,7 @@ const Guest = () => {
                     name="employee"
                     label="Invitados"
                     rules={[{ required: true, message: '', validator: (_, value) => {
-                        if (value != undefined) {
+                        if (value !== undefined) {
                             return Promise.resolve();
                           }
                           return Promise.reject(new Error('Selecciona al menos un invitado'));
@@ -307,10 +325,12 @@ const Guest = () => {
       ];
 
     const showModal = () => {
-       setIsModalVisible(true);
+        fetchEnterprisesWithPersons();
+        setIsModalVisible(true);
     };
 
     const handleCancel = () => {
+        setTreeData(null);
         setSelectedEventDetails(null);
         setIsModalVisible(false);
         setCurrentStep(0); 
