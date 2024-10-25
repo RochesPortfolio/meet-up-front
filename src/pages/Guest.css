@@ -2,7 +2,7 @@
     padding: 0 0 30px;
 }
 .tableContainer {
-    height: 5vh;
+    /* height: 5vh; */
     justify-content: center;
     display: flex;
     align-items: center;
@@ -31,7 +31,7 @@
     display: flex;
     justify-content: end;
     /* float: right; */
-    width: 78%;
+    width: 100%;
 }
 
 .rowContent {

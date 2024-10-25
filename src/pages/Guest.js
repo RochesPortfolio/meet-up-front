@@ -339,13 +339,13 @@ const Guest = () => {
       };
 
 	return (
-        <div className="home__section">
+        <div style={{height: '100vh', marginTop: '20vh'}}>
             {loading ? (
                 <div className="spin-container">
                     <Spin size="large" fullscreen/>
                 </div>
             ) : (
-                <div className="home_container">         
+                <div>         
                     <h1>Invitados por evento</h1>
                     <div className="tableContainer">
                         <table className="tableContent">
@@ -376,7 +376,7 @@ const Guest = () => {
                     </div>      
                     <div>
                         <h2>Lista de Invitaciones</h2>
-                        <div className="rowContainer">
+                        <div>
                             <Row gutter={16} className="rowContent">
                                 <Col span={3} className="colContent">
                                     <Card bordered={true}>
