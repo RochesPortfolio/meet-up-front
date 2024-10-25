@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import '../components/EventForm.css';
+import  Calendar  from './Calendar.js';
+import { ApiPort } from '../api/ApiPort';
 
 const EventForm = ({ onEventCreated }) => {
   const [formData, setFormData] = useState({
@@ -8,11 +10,15 @@ const EventForm = ({ onEventCreated }) => {
     aforo_evento: '',
     tipo_evento: '',
     descripcion: '',
+    rubro_negocio: '',
     hora_inicio: '',
     hora_culminacion: '',
     fecha_inicio: '',
     fecha_finalizacion: ''
   });
+
+  const [loading, setLoading] = useState(true);
+  const [allEvents, setAllEvents] = useState([]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -21,28 +27,31 @@ const EventForm = ({ onEventCreated }) => {
       [name]: value
     });
   };
+  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
     try {
-      const res = await fetch('http://localhost:3030/api/events/create', {
+      const res = await fetch(`${ApiPort}/api/events/create`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(formData),
       });
-
       if (res.ok) {
         const newEvent = await res.json();
-        console.log(formData)
         alert('Evento creado con éxito');
-        onEventCreated(newEvent);  // Notificar al padre que el evento fue creado
+        onEventCreated(newEvent);
       } else {
         alert('Error al crear el evento');
       }
     } catch (error) {
       console.error('Error al crear el evento:', error);
+    }
+    finally {
+      setLoading(false);
     }
   };
 
@@ -91,6 +100,18 @@ const EventForm = ({ onEventCreated }) => {
           id="tipo_evento"
           name="tipo_evento"
           value={formData.tipo_evento}
+          onChange={handleChange}
+          required
+        />
+      </div>
+
+      <div className="form-group">
+        <label htmlFor="rubro_negocio">Rubro del negocio</label>
+        <input
+          type="text"
+          id="rubro_negocio"
+          name="rubro_negocio"
+          value={formData.rubro_negocio}
           onChange={handleChange}
           required
         />
@@ -156,6 +177,7 @@ const EventForm = ({ onEventCreated }) => {
 
       <button className='form-group' type="submit">Crear Evento</button>
     </form>
+    
   );
 };
 
