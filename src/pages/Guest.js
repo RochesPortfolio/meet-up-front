@@ -63,9 +63,10 @@ const Guest = () => {
     const fetchEvents = async () => {
         try {
             const res = await fetch('http://localhost:3030/api/events');
-            const data = await res.json();
-            console.log(data);
-            const eventList = data.map(event => event.nombre_evento);
+            const {data} = await res.json();
+            const eventList = data.map(event => {
+                return event.nombre_evento;
+            });
             setEvents(eventList);
             setAllEventData(data); 
         } catch (error) {
@@ -76,22 +77,25 @@ const Guest = () => {
 
     const fetchGuest = async () => {
         try {
-            const res = await fetch('http://localhost:3030/api/guests');
+            const res = await fetch('http://localhost:3030/api/invites');
             const data = await res.json();
-            console.log(data)
-            const mappedData = data.map(guest => ({
-                nombre: guest.id_persona.nombres,
-                apellido: guest.id_persona.apellidos,
-                correo: guest.id_persona.correo,
-                telefono: guest.id_persona.telefono,
-                genero: guest.id_persona.genero === 'M' ? 'Masculino' : 'Femenino',
-                empresa: guest.id_empresa.nombre || 'Empresa Desconocida',
-                negocio: guest.id_empresa.rubro_negocio,
-                fechaInvitacion: guest.fecha_invitacion,
-                fechaConfirmacion: guest.fecha_confirmacion || '-',
-                estadoInvitacion: guest.estado_invitacion,
-                evento: guest.id_evento.nombre_evento
-            }));
+            const mappedData = data.map(guest => {
+                alert(guest.id_persona.nombres)
+
+                return {
+                    nombre: guest.id_persona.nombres,
+                    apellido: guest.id_persona.apellidos,
+                    correo: guest.id_persona.correo,
+                    telefono: guest.id_persona.telefono,
+                    genero: guest.id_persona.genero === 'M' ? 'Masculino' : 'Femenino',
+                    empresa: guest.id_empresa.nombre || 'Empresa Desconocida',
+                    negocio: guest.id_empresa.rubro_negocio,
+                    fechaInvitacion: guest.fecha_invitacion,
+                    fechaConfirmacion: guest.fecha_confirmacion || '-',
+                    estadoInvitacion: guest.estado_invitacion,
+                    evento: guest.id_evento.nombre_evento
+                }
+            });
 
             setListGuest(mappedData);
             setLoading(false);
@@ -118,7 +122,7 @@ const Guest = () => {
 
     const accepted = filterGuest.filter(guest => guest.estadoInvitacion ===  'Confirmada').length;
     const pending = filterGuest.filter(guest => guest.estadoInvitacion ===  'Pendiente').length;
-    const rejected = filterGuest.filter(guest => guest.estadoInvitacion ===  'Rechazado').length;
+    const rejected = filterGuest.filter(guest => guest.estadoInvitacion ===  'Declinada').length;
 
     const cleanSelection = () => {
         setEventSelected(undefined);  // Limpiar evento seleccionado
@@ -168,7 +172,7 @@ const Guest = () => {
                 case 'Pendiente':
                   color = 'yellow';
                   break;
-                case 'Rechazado':
+                case 'Declinada':
                   color = 'red';
                   break;
                 default:
@@ -403,7 +407,7 @@ const Guest = () => {
                                 <Col span={3} className="colContent">
                                     <Card bordered={true}>
                                         <Statistic
-                                            title="Rechazados"
+                                            title="Declinadas"
                                             value={rejected}
                                             precision={0}
                                             valueStyle={{
