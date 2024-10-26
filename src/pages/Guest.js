@@ -66,12 +66,10 @@ const Guest = () => {
         try {
             const res = await fetch(`${ApiPort}/api/events`);
             const {data} = await res.json();
-            console.log(data, 'data')
             const eventList = data.map((event) => ({
                 title: event.nombre_evento,
                 key: event.hash_evento
             }));
-            console.log(eventList)
             setEvents(eventList);
             setAllEventData(data); 
         } catch (error) {
@@ -122,7 +120,6 @@ const Guest = () => {
                     value: person.correo
                 }))
             }))
-            console.log(formattedData)
             setTreeData(formattedData);
         } catch (error) {
             console.error("Error al obtener la lista de Empresas: ", error);
@@ -208,14 +205,14 @@ const Guest = () => {
     ]
 
     const handleEventSelect = (value) => {
-        setEventInviteSelected(value);
-        console.log(allEventData)
         const selectedEvent = allEventData.find(event => event.nombre_evento === value);
         if(selectedEvent != null) {
             selectedEvent.fecha_inicio = dayjs(selectedEvent.fecha_inicio).format('DD/MM/YYYY');
             selectedEvent.hora_inicio = formatTime(selectedEvent.hora_inicio);
             selectedEvent.hora_culminacion = formatTime(selectedEvent.hora_culminacion);
             setSelectedEventDetails(selectedEvent);
+            const keyEventSelected = selectedEvent.hash_evento;
+            setEventInviteSelected(keyEventSelected);
         }
     }
 
@@ -236,7 +233,6 @@ const Guest = () => {
             }
         })
         setSelectedGuestValues(newSelectedValues);
-        console.log(selectedGuestValues, 'seleccionados')
     };
 
     const steps = [
@@ -319,6 +315,7 @@ const Guest = () => {
                 <Form.Item
                     name="message"
                     label="Mensaje"    
+                    rules={[{ required: true, message: '' }]}
                 >
                     <TextArea placeholder="Escribe los detalles para esta nueva invitación" autoSize={{ minRows: 3, maxRows: 8 }}>
                     </TextArea>
@@ -348,46 +345,54 @@ const Guest = () => {
     };
 
     const nextStep = async () => {
-        // form.validateFields().then(() => {
-        //   setCurrentStep(currentStep + 1);
-        // }).catch(() => {
-        //   message.error('Por favor completa los campos antes de continuar');
-        // });
         try {
             const values = await form.validateFields();
-            console.log(values, 'valores');
             setFormData(prevData => ({...prevData, ...values}));
             setCurrentStep(currentStep +1);
 
-            form.resetFields();
+            // form.resetFields();
         } catch (error) {
             message.error('Por favor completa los campos antes de continuar');
         }
     };
 
     const handleCreate = async () => {    
-        // form.validateFields().then((values) => {
-        //     console.log(values)
-        // }).catch(() => {
-        //     message.error('Por favor completa los campos');
-        // });
+        const hideLoading = message.loading({ content: 'Espere un momento...', duration: 0 });
         try {
-            console.log(selectedGuestValues, 'valores seleccionados')
             const values = await form.validateFields();
-            console.log(values);
-            const allData = {...formData, ...values, emails: {...selectedGuestValues}};
-            console.log("Datos completos", allData);
+            const allData = {...formData, ...values, emails: {...selectedGuestValues}, eventHash: eventInviteSelected};
 
-            // const bodyData = Object.values(formData.emails).map((email) => ({
-            //     from: "MeetUp Surveys",
-            //     to: email,
-            //     subject: formData.message,
-            //     mailTemplateType: "survey",
-            //     hash_evento: formData.event,
-            // }));
+            const bodyData = Object.values(allData.emails).map((email) => ({
+                from: "MeetUp Surveys",
+                to: email,
+                subject: allData.message,
+                mailTemplateType: "survey",
+                hash_evento: allData.eventHash,
+            }));
+
+            console.log(bodyData);
+            const response = await fetch(`${ApiPort}/api/invite/sendInvite`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(bodyData)
+            });
+
+            const result = await response.json();
+
+            if (response.ok && result.httpStatus === 200) {
+                hideLoading();
+                message.success('Invitaciones enviadas correctamente.');
+            } else {
+                hideLoading();
+                message.error('Ha ocurrido un error al enviar las invitaciones, intenta más tarde');
+            }
 
             handleCancel();
         } catch (error) {
+            console.log(error)
+            hideLoading();
             message.error('Por favor completa los campos');
         }
       };
@@ -432,7 +437,7 @@ const Guest = () => {
                         <h2>Lista de Invitaciones</h2>
                         <div>
                             <Row gutter={16} className="rowContent">
-                                <Col span={3} className="colContent">
+                                <Col span={4} className="colContent">
                                     <Card bordered={true}>
                                         <Statistic
                                             title="Confirmada"
@@ -445,7 +450,7 @@ const Guest = () => {
                                         />
                                     </Card>
                                 </Col>
-                                <Col span={3} className="colContent">
+                                <Col span={4} className="colContent">
                                     <Card bordered={true}>
                                         <Statistic
                                             title="Pendientes"
@@ -458,7 +463,7 @@ const Guest = () => {
                                         />
                                     </Card>
                                 </Col>
-                                <Col span={3} className="colContent">
+                                <Col span={4} className="colContent">
                                     <Card bordered={true}>
                                         <Statistic
                                             title="Declinadas"
