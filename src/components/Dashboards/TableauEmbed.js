@@ -1,5 +1,6 @@
 // src/components/PowerBIReport.js
 import React, { useEffect } from 'react';
+import { ApiPort } from '../../api/ApiPort';
 
 const DashboardEmbed = () => {
     useEffect(() => {
@@ -7,7 +8,7 @@ const DashboardEmbed = () => {
         const fetchAndEmbedReport = async () => {
             try {
                 // Solicitar el token de Power BI a tu backend
-                const response = await fetch("http://localhost:3030/api/dash", {
+                const response = await fetch(`${ApiPort}/api/dash`, {
                     method: "GET",
                     headers: {
                         "Content-Type": "application/json",
@@ -92,7 +93,7 @@ const DashboardEmbed = ({ embedUrl , reportId }) => {
 
 
         // Solicitar el token de Tableau a nuestro backend proxy
-        const response = await fetch("http://localhost:3030/api/dash", {
+        const response = await fetch(`${ApiPort}/api/dash", {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -158,7 +159,7 @@ const DashboardEmbed = () => {
         const loadDashboard = async () => {
             try {
                 // Solicitar el token de Tableau a nuestro backend proxy
-                  const response = await fetch("http://localhost:3030/api/dash", {
+                  const response = await fetch(`${ApiPort}/api/dash", {
                   method: "GET",
                   headers: {
                     "Content-Type": "application/json",
@@ -240,7 +241,7 @@ const TableauEmbed = ({ tableauUrl }) => {
     const authenticateWithBackend = async () => {
       try {
         // Solicitar el token de Tableau a nuestro backend proxy
-        const response = await fetch("http://localhost:3030/api/dash", {
+        const response = await fetch(`${ApiPort}/api/dash", {
           method: "GET",
           headers: {
             "Content-Type": "application/json",

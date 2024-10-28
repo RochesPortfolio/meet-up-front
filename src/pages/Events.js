@@ -4,7 +4,8 @@ import { Table, Card, Col, Row, Statistic, Button, DatePicker, Tag, Modal, Selec
 import { Header } from "antd/es/layout/layout";
 import { ApiPort } from '../api/ApiPort';
 import dayjs from "dayjs";
-import 'dayjs/locale/es'
+import 'dayjs/locale/es';
+
 const { RangePicker } = DatePicker;
 dayjs.locale('es');
 
@@ -23,7 +24,7 @@ const Event = () => {
 
     const fetchEvents = async () => {
         try {
-            const res = await fetch('http://localhost:3030/api/events');
+            const res = await fetch(`${ApiPort}/api/events`);
             const data = await res.json();
             // const data = {
             //     "data": [
