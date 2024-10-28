@@ -17,6 +17,7 @@ import ToogleThemeButton from './components/ToggleThemeButton';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAnglesLeft,  faAnglesRight, faArrowRightFromBracket} from '@fortawesome/free-solid-svg-icons';
 import { Content } from 'antd/es/layout/layout';
+import MyCalendar from './components/Calendar';
 
 const {Header, Sider} = Layout;
 
@@ -121,6 +122,7 @@ function AppContent() {
                   <Route path="/home" element={<Home />} />
                   <Route path="/guest" element={<Guest />} />
                   <Route path="/event" element={<Event />} />
+                  <Route path="/calendar" element={<MyCalendar />} />
                   <Route path="/dashboard" element={<Dashboard/>}/>
                 </Routes>
               </LoadingComponent>
