@@ -99,7 +99,7 @@ const Event = () => {
     const uniqueState = [...new Set(events.map(event => event.status))];
 
     const planned = events.filter(event => event.status ===  "Pendiente").length;
-    const inProgress = events.filter(event => event.status === "En progreso").length;
+    const inProgress = events.filter(event => event.status === "En curso").length;
     const finished = events.filter(event => event.status ===  "Finalizado").length;
 
     const handleDateChange = (dates) => {
@@ -156,14 +156,16 @@ const Event = () => {
             key: 'status',
             align: 'center',
             filters: uniqueState.map(state => ({ text: state, value: state })),
-            onFilter: (value, record) => record.estado.includes(value),
+            onFilter: (value, record) => {
+                return record.estado.includes(value)
+            },
             render: (estado) => {
               let color = '';
               switch (estado) {
                 case 'Pendiente':
                   color = 'green';
                   break;
-                case 'En progreso':
+                case 'En curso':
                   color = 'yellow';
                   break;
                 case 'Finalizado':
