@@ -201,14 +201,14 @@ const Event = () => {
             .then(values => {
                 const newCost = {
                     nombre: values.nombre,
-                    evento: selectedEvent.nombre_evento,
+                    evento: selectedEvent.id_evento,
                     total: values.total,
                     descuento: values.descuento || 0,
                     estado: values.estado,
                     descripcion: values.descripcion || ''
                 };
                 setCostList([...costList, newCost]);
-                console.log(...costList)
+                
                 form.resetFields(['nombre', 'total', 'descuento', 'estado', 'descripcion']);
                 message.success("Costo agregado correctamente.");
             })
@@ -223,24 +223,25 @@ const Event = () => {
             return;
         }
 
+        
         const data = {
             costos: costList.map(cost => ({
-                evento: selectedEvent.nombre_evento,
+                evento: selectedEvent.id_evento,
                 total: cost.total,
                 descuento: cost.descuento,
                 estado: cost.estado,
                 descripcion: cost.descripcion
             }))
         };
-        console.log(data, 'data')
+        
         const hideLoading = message.loading({ content: 'Espere un momento...', duration: 0 });
         try {
-            const response = await fetch(`${ApiPort}/api/invite/sendInvite`, {
+            const response = await fetch(`${ApiPort}/api/cost`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: data
+                body: JSON.stringify(data)
             });
 
             const result = await response.json();
