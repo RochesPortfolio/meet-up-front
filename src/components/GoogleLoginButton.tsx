@@ -18,7 +18,7 @@ export default function GoogleLoginButton() {
         // delay de 1 segundo
         setTimeout(() => {
             store.setUser(decoded.name);
-            navigate('/home')
+            navigate('/dashboard')
             store.setloading(false);
         }, 2500);
     }

@@ -119,7 +119,7 @@ function AppContent() {
                 <Routes>
                   {/* <FunctionalApp/> */}
                   <Route path="/" element={<LoginScreen />} />
-                  <Route path="/home" element={<Home />} />
+                  {/* <Route path="/home" element={<Home />} /> */}
                   <Route path="/guest" element={<Guest />} />
                   <Route path="/event" element={<Event />} />
                   <Route path="/calendar" element={<MyCalendar />} />
