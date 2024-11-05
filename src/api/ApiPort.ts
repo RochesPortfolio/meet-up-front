@@ -1,2 +1,2 @@
-export const ApiPort = "http://98.82.238.226:3030";
+export const ApiPort = "https://api.meet-up-dev.com";
 // export const ApiPort = "http://localhost:3030";
