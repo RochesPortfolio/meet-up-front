@@ -21,6 +21,7 @@ const Event = () => {
     const [form] = Form.useForm();
     const [costList, setCostList] = useState([]);
     const [eventStatus, setEventStatus] = useState('');
+    const [totalCost, setTotalCost] = useState(0);
 
     const fetchEvents = async () => {
         try {
@@ -98,6 +99,7 @@ const Event = () => {
     }, []);
 
     const uniqueState = [...new Set(events.map(event => event.status))];
+    const uniqueCategory = [...new Set(events.map(event => event.tipo_evento))];
 
     const planned = events.filter(event => event.status ===  "Pendiente").length;
     const inProgress = events.filter(event => event.status === "En curso").length;
@@ -126,6 +128,7 @@ const Event = () => {
     };
 
     const openEditModal = (event) => {
+        setEventStatus(event.status);
         setSelectedEvent(event);
         setIsModalVisible(true);
     };
@@ -142,7 +145,11 @@ const Event = () => {
         {   title: 'Nombre', dataIndex: 'nombre_evento', key: 'nombre_evento',
             sorter: (a, b) => a.nombre_evento.localeCompare(b.nombre_evento)
         },
-        { title: 'Categoría', dataIndex: 'tipo_evento', key: 'tipo_evento' },
+        { title: 'Categoría', dataIndex: 'tipo_evento', key: 'tipo_evento',
+            align: 'center',
+            filters: uniqueCategory.map(category => ({text: category, value: category})),
+            onFilter: (value, record) => { return record.tipo_evento.includes(value) },
+         },
         { title: 'Detalle', dataIndex: 'descripcion', key: 'descripcion' },
         { title: 'Ubicación', dataIndex: 'lugar_evento', key: 'lugar_evento' },
         {   title: 'Fecha', dataIndex: 'fecha_inicio', key: 'fecha_inicio',
@@ -158,7 +165,7 @@ const Event = () => {
             align: 'center',
             filters: uniqueState.map(state => ({ text: state, value: state })),
             onFilter: (value, record) => {
-                return record.estado.includes(value)
+                return record.status.includes(value)
             },
             render: (estado) => {
               let color = '';
@@ -208,7 +215,8 @@ const Event = () => {
                     descripcion: values.descripcion || ''
                 };
                 setCostList([...costList, newCost]);
-                
+                const newTotal = totalCost + values.total;
+                setTotalCost(newTotal);
                 form.resetFields(['nombre', 'total', 'descuento', 'estado', 'descripcion']);
                 message.success("Costo agregado correctamente.");
             })
@@ -218,7 +226,8 @@ const Event = () => {
     };
 
     const handleSave = async () => {
-        if (costList.length === 0) {
+        console.log(eventStatus)
+        if (costList.length === 0 && eventStatus === 'Finalizado') {
             message.error("No hay costos para guardar");
             return;
         }
@@ -227,10 +236,10 @@ const Event = () => {
         const data = {
             costos: costList.map(cost => ({
                 evento: selectedEvent.id_evento,
-                total: cost.total,
-                descuento: cost.descuento,
+                total: cost ? cost.total : '',
+                descuento: cost ? cost.descuento : '',
                 estado: cost.estado,
-                descripcion: cost.descripcion
+                descripcion: cost ? cost.descripcion : ''
             }))
         };
         
@@ -375,7 +384,7 @@ const Event = () => {
                                 label="Estado del Evento"
                                 rules={[{ required: true, message: 'Por favor selecciona el estado del evento' }]}
                             >
-                                <Select placeholder="Selecciona" onChange={handleStatusChange}>
+                                <Select placeholder="Selecciona" onChange={handleStatusChange} disabled={eventStatus === 'Finalizado'}>
                                     <Option value="Planificado">Planificado</Option>
                                     <Option value="En curso">En curso</Option>
                                     <Option value="Finalizado">Finalizado</Option>
@@ -441,15 +450,20 @@ const Event = () => {
                     </div>
                 </div>
                 {costList.length > 0 && (
-                    <div>
-                        <Table
-                            dataSource={costList}
-                            columns={costColumns}
-                            rowKey={(record, index) => index}
-                            style={{ marginTop: 20 }}
-                            pagination={{ pageSize: 5 }}
-                        />
-                    </div>
+                    <>
+                        <div>
+                            <Table
+                                dataSource={costList}
+                                columns={costColumns}
+                                rowKey={(record, index) => index}
+                                style={{ marginTop: 20 }}
+                                pagination={{ pageSize: 5 }}
+                            />
+                            <p style={{fontWeight: 'bold', fontSize: '18px'}}>Total: Q{totalCost.toFixed(2)} </p>
+                        </div>
+                        <div>
+                        </div>
+                    </>
                 )}
             </Modal>
         </div>

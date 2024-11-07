@@ -69,7 +69,8 @@ const Guest = () => {
             const eventList = data.map((event) => ({
                 title: event.nombre_evento,
                 key: event.hash_evento
-            }));
+            })).sort((a, b) => a.title.localeCompare(b.title));;
+
             setEvents(eventList);
             setAllEventData(data); 
         } catch (error) {
@@ -254,8 +255,13 @@ const Guest = () => {
                     rules={[{ required: true, message: '' }]}
                 >   
                     <Select 
+                        showSearch
+                        optionFilterProp="children" 
                         value={eventInviteSelected}
                         onChange={handleEventSelect}
+                        filterOption={(input, option) =>
+                            option?.children.toLowerCase().includes(input.toLowerCase())
+                        } 
                     >
                         {events.map((event) => (
                             <Select.Option key={event.key} value={event.title}>{event.title}</Select.Option>
