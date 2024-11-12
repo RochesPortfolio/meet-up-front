@@ -19,72 +19,18 @@ const Event = () => {
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [selectedEvent, setSelectedEvent] = useState(null);
     const [form] = Form.useForm();
-    const [costList, setCostList] = useState([]);
+    // const [costList, setCostList] = useState([]);
+    // const [costListSaved, setCostListSaved] = useState([]);
     const [eventStatus, setEventStatus] = useState('');
     const [totalCost, setTotalCost] = useState(0);
+    const [existingCosts, setExistingCosts] = useState([]);
+    const [newCosts, setNewCosts] = useState([]);
 
     const fetchEvents = async () => {
         try {
             const res = await fetch(`${ApiPort}/api/events`);
             const data = await res.json();
-            // const data = {
-            //     "data": [
-            //         {
-            //             "id_evento": 12,
-            //             "hash_evento": "06f9a5c8-97c0-4908-8bda-7d718dc83f2b",
-            //             "nombre_evento": "E-commerce Summit",
-            //             "lugar_evento": "Chicago, IL",
-            //             "aforo_evento": 200,
-            //             "tipo_evento": "Cumbre",
-            //             "descripcion": "Una cumbre sobre comercio electrónico.",
-            //             "rubro_negocio": "E-commerce",
-            //             "hora_inicio": "08:00:00",
-            //             "hora_culminacion": "12:00:00",
-            //             "fecha_inicio": "2024-09-20",
-            //             "fecha_finalizacion": "2024-09-20",
-            //             "fecha_creacion": "2024-10-23T12:25:40.876Z",
-            //             "fecha_actualizacion": "2024-10-23T12:25:40.876Z",
-            //             "status": "Finalizado"
-            //         },
-            //         {
-            //             "id_evento": 10,
-            //             "hash_evento": "386712d8-7845-4141-bbbb-c0af3a72334a",
-            //             "nombre_evento": "AI Summit",
-            //             "lugar_evento": "San Francisco, CA",
-            //             "aforo_evento": 500,
-            //             "tipo_evento": "Conferencia",
-            //             "descripcion": "Una conferencia sobre inteligencia artificial.",
-            //             "rubro_negocio": "Tecnología",
-            //             "hora_inicio": "09:00:00",
-            //             "hora_culminacion": "17:00:00",
-            //             "fecha_inicio": "2024-09-05",
-            //             "fecha_finalizacion": "2024-09-05",
-            //             "fecha_creacion": "2024-10-23T12:25:14.851Z",
-            //             "fecha_actualizacion": "2024-10-23T12:25:14.851Z",
-            //             "status": "Finalizado"
-            //         },
-            //         {
-            //             "id_evento": 11,
-            //             "hash_evento": "56fcbbe1-d5e1-4fda-abb8-05edcf46909f",
-            //             "nombre_evento": "Blockchain Expo",
-            //             "lugar_evento": "New York, NY",
-            //             "aforo_evento": 300,
-            //             "tipo_evento": "Exposición",
-            //             "descripcion": "Una exposición sobre tecnología blockchain.",
-            //             "rubro_negocio": "Tecnología",
-            //             "hora_inicio": "10:00:00",
-            //             "hora_culminacion": "16:00:00",
-            //             "fecha_inicio": "2024-09-10",
-            //             "fecha_finalizacion": "2024-09-10",
-            //             "fecha_creacion": "2024-10-23T12:25:33.877Z",
-            //             "fecha_actualizacion": "2024-10-23T12:25:33.877Z",
-            //             "status": "Finalizado"
-            //         }
-            //     ],
-            //     "success": true,
-            //     "message": "Events by month and year",
-            //     "httpStatus": 200
-            // }
+            
             setEvents(data.data);
             setFilteredEvents(data.data);
             setLoading(false);
@@ -93,6 +39,38 @@ const Event = () => {
             setLoading(false)
         }
     }
+
+
+    const fetchCost = async (eventID) => {
+        try {
+            fetch(`${ApiPort}/api/cost/${eventID}`)
+            .then(response => response.json())
+            .then(data => {
+                const transData = data.map(item => ({
+                    key: item.id_gasto.toString(),
+                    nombre: '',
+                    evento: eventID,
+                    total: parseFloat(item.total),
+                    descuento: parseFloat(item.descuento),
+                    estado: item.estado_pago,
+                    descripcion: item.comentarios
+                }));
+                const sum = transData.reduce((acc, cost) => acc + cost.total, 0);
+                setExistingCosts(transData);
+                calculateTotalSum(transData, newCosts);
+                // setTotalCost(sum);
+            });
+        } catch (error) {
+            console.error("Error al obtener el listado de costos: ", error);
+            setLoading(false);
+        }
+    }
+
+    const calculateTotalSum = (existing, newC) => {
+        const existingTotal = existing.reduce((acc, cost) => acc + cost.total, 0);
+        const newTotal = newC.reduce((acc, cost) => acc + (parseFloat(cost.total) || 0), 0);
+        setTotalCost(existingTotal + newTotal);
+      };
 
     useEffect(() => {
         fetchEvents();
@@ -115,7 +93,6 @@ const Event = () => {
                 const eventDate = new Date(event.fecha_inicio);
                 return eventDate >= startDate && eventDate <= endDate;
             });
-            console.log(filtered);
             setFilteredEvents(filtered);
         } else {
           setFilteredEvents(events);
@@ -128,6 +105,7 @@ const Event = () => {
     };
 
     const openEditModal = (event) => {
+        fetchCost(event.id_evento);
         setEventStatus(event.status);
         setSelectedEvent(event);
         setIsModalVisible(true);
@@ -137,7 +115,10 @@ const Event = () => {
         setIsModalVisible(false);
         setEventStatus(null);
         setSelectedEvent(undefined);
-        setCostList([]);
+        // setCostList([]);
+        setNewCosts([]);
+        setTotalCost(0);
+        setExistingCosts([]);
         form.resetFields();
     };
 
@@ -198,7 +179,7 @@ const Event = () => {
         { title: 'Estado', dataIndex: 'estado', key: 'estado' },
         { title: 'Descripción', dataIndex: 'descripcion', key: 'descripcion' }
     ];
-
+ 
     const handleStatusChange = (value) => {
         setEventStatus(value);
     };
@@ -207,6 +188,7 @@ const Event = () => {
         form.validateFields()
             .then(values => {
                 const newCost = {
+                    key: `new-${Date.now()}`,
                     nombre: values.nombre,
                     evento: selectedEvent.id_evento,
                     total: values.total,
@@ -214,7 +196,7 @@ const Event = () => {
                     estado: values.estado,
                     descripcion: values.descripcion || ''
                 };
-                setCostList([...costList, newCost]);
+                setNewCosts([...newCosts, newCost]);
                 const newTotal = totalCost + values.total;
                 setTotalCost(newTotal);
                 form.resetFields(['nombre', 'total', 'descuento', 'estado', 'descripcion']);
@@ -225,24 +207,30 @@ const Event = () => {
             });
     };
 
+    const handleNewCostChange = (index, field, value) => {
+        const updatedNewCosts = newCosts.map((cost, idx) => (
+          idx === index ? { ...cost, [field]: value } : cost
+        ));
+        setNewCosts(updatedNewCosts);
+    };
+
     const handleSave = async () => {
-        console.log(eventStatus)
-        if (costList.length === 0 && eventStatus === 'Finalizado') {
+        if (newCosts.length === 0 && eventStatus === 'Finalizado') {
             message.error("No hay costos para guardar");
             return;
         }
 
-        
         const data = {
-            costos: costList.map(cost => ({
+            id_evento: selectedEvent.id_evento,
+            status_evento: eventStatus,
+            costos: newCosts.length > 0 ? newCosts.map(cost => ({
                 evento: selectedEvent.id_evento,
                 total: cost ? cost.total : '',
                 descuento: cost ? cost.descuento : '',
                 estado: cost.estado,
                 descripcion: cost ? cost.descripcion : ''
-            }))
+            })) : []
         };
-        
         const hideLoading = message.loading({ content: 'Espere un momento...', duration: 0 });
         try {
             const response = await fetch(`${ApiPort}/api/cost`, {
@@ -257,6 +245,7 @@ const Event = () => {
 
             if (response.ok && result.httpStatus === 200) {
                 hideLoading();
+                fetchEvents();
                 message.success("Datos guardados correctamente.");
             } else {
                 hideLoading();
@@ -269,6 +258,11 @@ const Event = () => {
             message.error("Ha ocurrido un error, por favor intenta más tarde.");
         }
     };
+
+    const dataSource = [
+        ...existingCosts,
+        ...newCosts
+    ]
 
 	return (
         <div style={{height: '100vh', marginTop: '20vh', width: '100vw'}}>
@@ -304,7 +298,7 @@ const Event = () => {
                                 <Col span={4} className="colContent">
                                     <Card bordered={true}>
                                         <Statistic
-                                            title="Planificados"
+                                            title="Pendiente"
                                             value={planned}
                                             precision={0}
                                             valueStyle={{
@@ -385,7 +379,7 @@ const Event = () => {
                                 rules={[{ required: true, message: 'Por favor selecciona el estado del evento' }]}
                             >
                                 <Select placeholder="Selecciona" onChange={handleStatusChange} disabled={eventStatus === 'Finalizado'}>
-                                    <Option value="Planificado">Planificado</Option>
+                                    <Option value="Pendiente">Pendiente</Option>
                                     <Option value="En curso">En curso</Option>
                                     <Option value="Finalizado">Finalizado</Option>
                                 </Select>
@@ -449,13 +443,13 @@ const Event = () => {
                         </Form>
                     </div>
                 </div>
-                {costList.length > 0 && (
+                {dataSource.length > 0 && (
                     <>
                         <div>
                             <Table
-                                dataSource={costList}
+                                dataSource={dataSource}
                                 columns={costColumns}
-                                rowKey={(record, index) => index}
+                                rowKey="key"
                                 style={{ marginTop: 20 }}
                                 pagination={{ pageSize: 5 }}
                             />
